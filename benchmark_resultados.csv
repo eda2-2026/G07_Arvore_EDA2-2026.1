@@ -1,0 +1,4 @@
+Metodo;Complexidade;Registros;Tempo_ms;Comparacoes;Movimentacoes;RAM_MB;Ordenado;Observacao
+Insertion Sort;O(n^2);5000;132.416;6168616;6173621;3.32;sim;amostra de 5000
+Selection Sort;O(n^2);5000;30.122;12497500;14976;3.32;sim;amostra de 5000
+Merge Sort;O(n log n);44931;40.451;634451;1396582;29.82;sim;base completa
