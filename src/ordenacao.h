@@ -12,17 +12,17 @@ void ordenar_insertion_sort(Registro *dados, int total,
 void ordenar_selection_sort(Registro *dados, int total,
                             ComparadorRegistro comparar,
                             MetricasOrdenacao *metricas);
-// void ordenar_merge_sort(Registro *dados, int total, ComparadorRegistro
-// comparar,
-//                         MetricasOrdenacao *metricas);
-// void ordenar_quick_sort(Registro *dados, int total, ComparadorRegistro
-// comparar,
-//                         MetricasOrdenacao *metricas);
-// void ordenar_heap_sort(Registro *dados, int total, ComparadorRegistro
-// comparar,
-//                        MetricasOrdenacao *metricas);
-// void ordenar_radix_sort(Registro *dados, int total, ComparadorRegistro
-// comparar,
-//                         MetricasOrdenacao *metricas);
+void ordenar_merge_sort(Registro *dados, int total,
+                        ComparadorRegistro comparar,
+                        MetricasOrdenacao *metricas);
+void ordenar_quick_sort(Registro *dados, int total,
+                        ComparadorRegistro comparar,
+                        MetricasOrdenacao *metricas);
+void ordenar_heap_sort(Registro *dados, int total,
+                       ComparadorRegistro comparar,
+                       MetricasOrdenacao *metricas);
+void ordenar_radix_sort(Registro *dados, int total,
+                        ComparadorRegistro comparar,
+                        MetricasOrdenacao *metricas);
 
 #endif

@@ -43,6 +43,15 @@ int main(int argc, char *argv[]) {
        ordenar_selection_sort},
       {"Merge Sort", "O(n log n)",
        "divide a lista e intercala partes ordenadas", 0, ordenar_merge_sort},
+      {"Quick Sort", "O(n log n)",
+       "particiona em torno de um pivo e ordena recursivamente", 0,
+       ordenar_quick_sort},
+      {"Heap Sort", "O(n log n)",
+       "constroi um heap maximo e extrai o maior repetidamente", 0,
+       ordenar_heap_sort},
+      {"Radix Sort", "O(n*d)",
+       "distribui por digitos do preco e desempata pela chave composta", 0,
+       ordenar_radix_sort},
   };
 
   imprimir_cabecalho();

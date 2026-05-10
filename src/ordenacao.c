@@ -142,3 +142,137 @@ static int particionar(Registro *dados, int inicio, int fim,
   trocar(&dados[menor + 1], &dados[fim], metricas);
   return menor + 1;
 }
+
+static void quick_sort_recursivo(Registro *dados, int inicio, int fim,
+                                 ComparadorRegistro comparar,
+                                 MetricasOrdenacao *metricas) {
+  if (inicio >= fim)
+    return;
+
+  int pivo = particionar(dados, inicio, fim, comparar, metricas);
+  quick_sort_recursivo(dados, inicio, pivo - 1, comparar, metricas);
+  quick_sort_recursivo(dados, pivo + 1, fim, comparar, metricas);
+}
+
+void ordenar_quick_sort(Registro *dados, int total, ComparadorRegistro comparar,
+                        MetricasOrdenacao *metricas) {
+  if (total <= 1)
+    return;
+  quick_sort_recursivo(dados, 0, total - 1, comparar, metricas);
+}
+
+static void afundar(Registro *dados, int tamanho, int raiz,
+                    ComparadorRegistro comparar, MetricasOrdenacao *metricas) {
+  int maior = raiz;
+  int esquerda = 2 * raiz + 1;
+  int direita = 2 * raiz + 2;
+
+  if (esquerda < tamanho &&
+      comparar(&dados[esquerda], &dados[maior], metricas) > 0) {
+    maior = esquerda;
+  }
+  if (direita < tamanho &&
+      comparar(&dados[direita], &dados[maior], metricas) > 0) {
+    maior = direita;
+  }
+
+  if (maior != raiz) {
+    trocar(&dados[raiz], &dados[maior], metricas);
+    afundar(dados, tamanho, maior, comparar, metricas);
+  }
+}
+
+void ordenar_heap_sort(Registro *dados, int total, ComparadorRegistro comparar,
+                       MetricasOrdenacao *metricas) {
+  if (total <= 1)
+    return;
+
+  for (int i = total / 2 - 1; i >= 0; i--) {
+    afundar(dados, total, i, comparar, metricas);
+  }
+
+  for (int i = total - 1; i > 0; i--) {
+    trocar(&dados[0], &dados[i], metricas);
+    afundar(dados, i, 0, comparar, metricas);
+  }
+}
+
+/*
+ * Radix Sort (LSD, base 10) sobre o preco em centavos.
+ * Como a chave usada pelo benchmark e composta (preco + estado + municipio +
+ * produto + revenda), apos a fase de radix fazemos um insertion sort dentro
+ * de cada faixa de precos iguais para garantir o desempate consistente com
+ * comparar_por_preco. Isso preserva a validacao "esta_ordenado" do benchmark.
+ */
+void ordenar_radix_sort(Registro *dados, int total, ComparadorRegistro comparar,
+                        MetricasOrdenacao *metricas) {
+  if (total <= 1)
+    return;
+
+  long long *chaves = malloc((size_t)total * sizeof(long long));
+  long long *chaves_aux = malloc((size_t)total * sizeof(long long));
+  Registro *aux = malloc((size_t)total * sizeof(Registro));
+  if (!chaves || !chaves_aux || !aux) {
+    free(chaves);
+    free(chaves_aux);
+    free(aux);
+    return;
+  }
+
+  long long max_chave = 0;
+  for (int i = 0; i < total; i++) {
+    chaves[i] = (long long)(dados[i].valor_venda * 100.0 + 0.5);
+    if (chaves[i] > max_chave)
+      max_chave = chaves[i];
+  }
+
+  for (long long exp = 1; max_chave / exp > 0; exp *= 10) {
+    int contador[10] = {0};
+
+    for (int i = 0; i < total; i++) {
+      int digito = (int)((chaves[i] / exp) % 10);
+      contador[digito]++;
+    }
+    for (int i = 1; i < 10; i++) {
+      contador[i] += contador[i - 1];
+    }
+
+    for (int i = total - 1; i >= 0; i--) {
+      int digito = (int)((chaves[i] / exp) % 10);
+      int pos = --contador[digito];
+      aux[pos] = dados[i];
+      chaves_aux[pos] = chaves[i];
+      metricas->movimentacoes++;
+    }
+
+    for (int i = 0; i < total; i++) {
+      dados[i] = aux[i];
+      chaves[i] = chaves_aux[i];
+      metricas->movimentacoes++;
+    }
+  }
+
+  int inicio_grupo = 0;
+  for (int i = 1; i <= total; i++) {
+    if (i == total || chaves[i] != chaves[inicio_grupo]) {
+      for (int k = inicio_grupo + 1; k < i; k++) {
+        Registro chave_reg = dados[k];
+        metricas->movimentacoes++;
+        int j = k - 1;
+        while (j >= inicio_grupo &&
+               comparar(&dados[j], &chave_reg, metricas) > 0) {
+          dados[j + 1] = dados[j];
+          metricas->movimentacoes++;
+          j--;
+        }
+        dados[j + 1] = chave_reg;
+        metricas->movimentacoes++;
+      }
+      inicio_grupo = i;
+    }
+  }
+
+  free(chaves);
+  free(chaves_aux);
+  free(aux);
+}

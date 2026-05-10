@@ -1,165 +1,31 @@
 <!doctype html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Benchmark de Ordenacao</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background: #f6f7f9;
-            color: #1f2933
-        }
-
-        main {
-            max-width: 1120px;
-            margin: 0 auto;
-            padding: 32px 20px
-        }
-
-        h1 {
-            font-size: 28px;
-            margin: 0 0 8px
-        }
-
-        p {
-            line-height: 1.5
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 22px 0
-        }
-
-        .kpi {
-            background: white;
-            border: 1px solid #d9dee7;
-            border-radius: 8px;
-            padding: 16px
-        }
-
-        .kpi strong {
-            display: block;
-            font-size: 24px;
-            margin-top: 6px
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border: 1px solid #d9dee7
-        }
-
-        th,
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #e5e9f0;
-            text-align: left;
-            font-size: 14px
-        }
-
-        th {
-            background: #e9edf3
-        }
-
-        tr:last-child td {
-            border-bottom: 0
-        }
-
-        .ok {
-            font-weight: bold;
-            color: #176b43
-        }
-
-        .note {
-            background: #fff7e6;
-            border: 1px solid #f2d48a;
-            padding: 12px;
-            border-radius: 8px
-        }
-
-        @media(max-width:760px) {
-            .grid {
-                grid-template-columns: 1fr
-            }
-
-            th,
-            td {
-                font-size: 12px;
-                padding: 8px
-            }
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benchmark de Ordenacao</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f6f7f9;color:#1f2933}main{max-width:1120px;margin:0 auto;padding:32px 20px}h1{font-size:28px;margin:0 0 8px}p{line-height:1.5}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.kpi{background:white;border:1px solid #d9dee7;border-radius:8px;padding:16px}.kpi strong{display:block;font-size:24px;margin-top:6px}table{width:100%;border-collapse:collapse;background:white;border:1px solid #d9dee7}th,td{padding:12px;border-bottom:1px solid #e5e9f0;text-align:left;font-size:14px}th{background:#e9edf3}tr:last-child td{border-bottom:0}.ok{font-weight:bold;color:#176b43}.note{background:#fff7e6;border:1px solid #f2d48a;padding:12px;border-radius:8px}@media(max-width:760px){.grid{grid-template-columns:1fr}th,td{font-size:12px;padding:8px}}
+</style>
 </head>
-
 <body>
-    <main>
-        <h1>Benchmark de Ordenacao - Precos de Combustiveis</h1>
-        <p>Relatorio gerado pelo programa em C. O CSV foi carregado uma vez e cada algoritmo recebeu uma copia identica
-            dos registros em memoria.</p>
-        <div class="grid">
-            <div class="kpi">Registros na base<strong>44931</strong></div>
-            <div class="kpi">Chave<strong>Preco + local</strong></div>
-            <div class="kpi">Metodos<strong>5</strong></div>
-        </div>
-        <p class="note">Insertion Sort e Selection Sort usam amostra limitada por serem O(n^2). Merge, Quick e Heap Sort
-            rodam na base completa.</p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Metodo</th>
-                    <th>Complexidade</th>
-                    <th>Registros</th>
-                    <th>Tempo (ms)</th>
-                    <th>Comparacoes</th>
-                    <th>Movimentacoes</th>
-                    <th>RAM dados</th>
-                    <th>Status</th>
-                    <th>Observacao</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Insertion Sort</td>
-                    <td>O(n^2)</td>
-                    <td>5000</td>
-                    <td>132.416</td>
-                    <td>6168616</td>
-                    <td>6173621</td>
-                    <td>3.32 MB</td>
-                    <td class="ok">ordenado</td>
-                    <td>amostra de 5000</td>
-                </tr>
-                <tr>
-                    <td>Selection Sort</td>
-                    <td>O(n^2)</td>
-                    <td>5000</td>
-                    <td>30.122</td>
-                    <td>12497500</td>
-                    <td>14976</td>
-                    <td>3.32 MB</td>
-                    <td class="ok">ordenado</td>
-                    <td>amostra de 5000</td>
-                </tr>
-                <tr>
-                    <td>Merge Sort</td>
-                    <td>O(n log n)</td>
-                    <td>44931</td>
-                    <td>40.451</td>
-                    <td>634451</td>
-                    <td>1396582</td>
-                    <td>29.82 MB</td>
-                    <td class="ok">ordenado</td>
-                    <td>base completa</td>
-                </tr>
-            </tbody>
-        </table>
-    </main>
+<main>
+<h1>Benchmark de Ordenacao - Precos de Combustiveis</h1>
+<p>Relatorio gerado pelo programa em C. O CSV foi carregado uma vez e cada algoritmo recebeu uma copia identica dos registros em memoria.</p>
+<div class="grid">
+<div class="kpi">Registros na base<strong>44931</strong></div>
+<div class="kpi">Chave<strong>Preco + local</strong></div>
+<div class="kpi">Metodos<strong>6</strong></div>
+</div>
+<p class="note">Insertion Sort e Selection Sort usam amostra limitada por serem O(n^2). Merge, Quick e Heap Sort rodam na base completa.</p>
+<table><thead><tr><th>Metodo</th><th>Complexidade</th><th>Registros</th><th>Tempo (ms)</th><th>Comparacoes</th><th>Movimentacoes</th><th>RAM dados</th><th>Status</th><th>Observacao</th></tr></thead><tbody>
+<tr><td>Insertion Sort</td><td>O(n^2)</td><td>5000</td><td>152.000</td><td>6168616</td><td>6173621</td><td>3.32 MB</td><td class="ok">ordenado</td><td>amostra de 5000</td></tr>
+<tr><td>Selection Sort</td><td>O(n^2)</td><td>5000</td><td>32.000</td><td>12497500</td><td>14976</td><td>3.32 MB</td><td class="ok">ordenado</td><td>amostra de 5000</td></tr>
+<tr><td>Merge Sort</td><td>O(n log n)</td><td>44931</td><td>49.000</td><td>634451</td><td>1396582</td><td>29.82 MB</td><td class="ok">ordenado</td><td>base completa</td></tr>
+<tr><td>Quick Sort</td><td>O(n log n)</td><td>44931</td><td>34.000</td><td>858041</td><td>1375012</td><td>29.82 MB</td><td class="ok">ordenado</td><td>base completa</td></tr>
+<tr><td>Heap Sort</td><td>O(n log n)</td><td>44931</td><td>50.000</td><td>1252553</td><td>1966626</td><td>29.82 MB</td><td class="ok">ordenado</td><td>base completa</td></tr>
+<tr><td>Radix Sort</td><td>O(n*d)</td><td>44931</td><td>201.000</td><td>10044364</td><td>10359264</td><td>29.82 MB</td><td class="ok">ordenado</td><td>base completa</td></tr>
+</tbody></table>
+</main>
 </body>
-
 </html>
