@@ -149,7 +149,7 @@ static void gerar_html_resultados(const ResultadoBenchmark resultados[],
     fprintf(arquivo, "<div class=\"kpi\">Chave<strong>Preco + local</strong></div>\n");
     fprintf(arquivo, "<div class=\"kpi\">Metodos<strong>%d</strong></div>\n", total_resultados);
     fprintf(arquivo, "</div>\n");
-    fprintf(arquivo, "<p class=\"note\">Insertion Sort e Selection Sort usam amostra limitada por serem O(n^2). Merge, Quick e Heap Sort rodam na base completa.</p>\n");
+    fprintf(arquivo, "<p class=\"note\">Algoritmos O(n^2) (Insertion e Selection) usam amostra limitada para a apresentacao nao travar. Shell, Merge, Quick, Heap e Radix Sort rodam na base completa.</p>\n");
     fprintf(arquivo, "<table><thead><tr><th>Metodo</th><th>Complexidade</th><th>Registros</th><th>Tempo (ms)</th><th>Comparacoes</th><th>Movimentacoes</th><th>RAM dados</th><th>Status</th><th>Observacao</th></tr></thead><tbody>\n");
 
     for (int i = 0; i < total_resultados; i++) {

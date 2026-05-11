@@ -12,6 +12,9 @@ void ordenar_insertion_sort(Registro *dados, int total,
 void ordenar_selection_sort(Registro *dados, int total,
                             ComparadorRegistro comparar,
                             MetricasOrdenacao *metricas);
+void ordenar_shell_sort(Registro *dados, int total,
+                        ComparadorRegistro comparar,
+                        MetricasOrdenacao *metricas);
 void ordenar_merge_sort(Registro *dados, int total,
                         ComparadorRegistro comparar,
                         MetricasOrdenacao *metricas);

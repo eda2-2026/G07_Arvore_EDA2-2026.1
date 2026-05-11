@@ -67,6 +67,39 @@ void ordenar_selection_sort(Registro *dados, int total,
   }
 }
 
+/*
+ * Shell Sort com sequencia de Knuth (h = 3h + 1, ... 121, 40, 13, 4, 1).
+ * Generaliza o Insertion Sort fazendo trocas de longa distancia primeiro,
+ * o que reduz drasticamente o numero de deslocamentos ate atingir gap = 1.
+ * Complexidade media empirica ~ O(n^1.3) com essa sequencia.
+ */
+void ordenar_shell_sort(Registro *dados, int total, ComparadorRegistro comparar,
+                        MetricasOrdenacao *metricas) {
+  if (total <= 1)
+    return;
+
+  int gap = 1;
+  while (gap < total / 3) {
+    gap = 3 * gap + 1;
+  }
+
+  while (gap >= 1) {
+    for (int i = gap; i < total; i++) {
+      Registro chave = dados[i];
+      metricas->movimentacoes++;
+      int j = i;
+      while (j >= gap && comparar(&dados[j - gap], &chave, metricas) > 0) {
+        dados[j] = dados[j - gap];
+        metricas->movimentacoes++;
+        j -= gap;
+      }
+      dados[j] = chave;
+      metricas->movimentacoes++;
+    }
+    gap /= 3;
+  }
+}
+
 static void intercalar(Registro *dados, Registro *auxiliar, int inicio,
                        int meio, int fim, ComparadorRegistro comparar,
                        MetricasOrdenacao *metricas) {
@@ -198,16 +231,50 @@ void ordenar_heap_sort(Registro *dados, int total, ComparadorRegistro comparar,
 }
 
 /*
- * Radix Sort (LSD, base 10) sobre o preco em centavos.
- * Como a chave usada pelo benchmark e composta (preco + estado + municipio +
- * produto + revenda), apos a fase de radix fazemos um insertion sort dentro
- * de cada faixa de precos iguais para garantir o desempate consistente com
- * comparar_por_preco. Isso preserva a validacao "esta_ordenado" do benchmark.
+ * Comparador que considera apenas as chaves secundarias (estado, municipio,
+ * produto, revenda). Usado pelo Radix Sort como passo previo, estavel, para
+ * que o LSD radix sobre o preco produza o mesmo resultado de comparar_por_preco.
+ */
+static int comparar_secundario(const Registro *a, const Registro *b,
+                               MetricasOrdenacao *metricas) {
+  if (metricas)
+    metricas->comparacoes++;
+
+  int estado = strcmp(a->estado, b->estado);
+  if (estado != 0)
+    return estado;
+
+  int municipio = strcmp(a->municipio, b->municipio);
+  if (municipio != 0)
+    return municipio;
+
+  int produto = strcmp(a->produto, b->produto);
+  if (produto != 0)
+    return produto;
+
+  return strcmp(a->revenda, b->revenda);
+}
+
+/*
+ * Radix Sort (LSD, base 10) canonico sobre o preco em centavos.
+ *
+ * Estrategia para chave composta (preco + estado + municipio + produto +
+ * revenda): primeiro fazemos uma passada estavel ordenando pelas chaves
+ * secundarias com Merge Sort; em seguida o LSD radix sobre o preco usa essa
+ * ordem como criterio de desempate "gratis" - como o LSD radix e estavel,
+ * registros com o mesmo preco preservam a ordem dada pelo passo previo.
+ *
+ * O parametro 'comparar' nao e usado: Radix Sort por definicao nao compara
+ * registros entre si na fase de distribuicao por digitos.
  */
 void ordenar_radix_sort(Registro *dados, int total, ComparadorRegistro comparar,
                         MetricasOrdenacao *metricas) {
+  (void)comparar;
+
   if (total <= 1)
     return;
+
+  ordenar_merge_sort(dados, total, comparar_secundario, metricas);
 
   long long *chaves = malloc((size_t)total * sizeof(long long));
   long long *chaves_aux = malloc((size_t)total * sizeof(long long));
@@ -249,26 +316,6 @@ void ordenar_radix_sort(Registro *dados, int total, ComparadorRegistro comparar,
       dados[i] = aux[i];
       chaves[i] = chaves_aux[i];
       metricas->movimentacoes++;
-    }
-  }
-
-  int inicio_grupo = 0;
-  for (int i = 1; i <= total; i++) {
-    if (i == total || chaves[i] != chaves[inicio_grupo]) {
-      for (int k = inicio_grupo + 1; k < i; k++) {
-        Registro chave_reg = dados[k];
-        metricas->movimentacoes++;
-        int j = k - 1;
-        while (j >= inicio_grupo &&
-               comparar(&dados[j], &chave_reg, metricas) > 0) {
-          dados[j + 1] = dados[j];
-          metricas->movimentacoes++;
-          j--;
-        }
-        dados[j + 1] = chave_reg;
-        metricas->movimentacoes++;
-      }
-      inicio_grupo = i;
     }
   }
 
