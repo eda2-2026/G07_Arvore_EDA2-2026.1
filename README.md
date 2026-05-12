@@ -13,7 +13,8 @@ Projeto em linguagem C para comparar metodos de ordenacao usando a base
 O programa carrega o CSV uma unica vez, guarda os registros em um vetor de
 `Registro` e executa cada algoritmo sobre uma copia identica desse vetor. Isso
 deixa claro o que e custo de leitura do arquivo e o que e custo de ordenacao.
-
+## Vídeo de explicação:
+https://youtu.be/RQWCVE7FE5E
 ## Metodos implementados
 - **Insertion Sort**: metodo simples, bom para explicar a insercao em uma parte
   ja ordenada. Executado em amostra limitada porque tem custo medio `O(n^2)`.
