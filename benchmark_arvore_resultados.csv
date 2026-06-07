@@ -1,0 +1,3 @@
+Estrutura;Insercoes;Ins_ms;Buscas;Bus_ms;Remocoes;Rem_ms;Altura;Rotacoes;Comparacoes
+AVL;44931;12.287;4493;0.146;4493;0.924;17;15900;681379
+Rubro-Negra;44931;7.108;4493;0.160;4493;0.472;17;15989;650098
