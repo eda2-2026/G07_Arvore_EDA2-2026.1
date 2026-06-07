@@ -22,6 +22,14 @@ typedef struct {
     long long movimentacoes;
 } MetricasOrdenacao;
 
+typedef struct {
+    long long comparacoes;
+    long long rotacoes;
+    long long insercoes;
+    long long buscas;
+    long long remocoes;
+} MetricasArvore;
+
 typedef int (*ComparadorRegistro)(const Registro *a, const Registro *b,
                                   MetricasOrdenacao *metricas);
 
