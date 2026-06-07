@@ -1,4 +1,4 @@
-# G07_Ordenacao_EDA2-2026.1
+# G07_Arvore_EDA2-2026.1
 
 ## Alunos
 | Matricula | Aluno |
@@ -7,14 +7,45 @@
 | 231036980 | Pedro Luiz Fonseca da Silva |
 
 ## Sobre
-Projeto em linguagem C para comparar metodos de ordenacao usando a base
-`02-cados-abertos-preco-gasolina-etanol.csv`, com precos de gasolina e etanol.
+Projeto em linguagem C que implementa e compara estruturas de dados baseadas em
+arvores usando a base `02-cados-abertos-preco-gasolina-etanol.csv`. O programa
+carrega o CSV uma vez, executa o benchmark de ordenacao e em seguida o benchmark
+de arvores AVL e Rubro-Negra sobre os mesmos registros.
 
-O programa carrega o CSV uma unica vez, guarda os registros em um vetor de
-`Registro` e executa cada algoritmo sobre uma copia identica desse vetor. Isso
-deixa claro o que e custo de leitura do arquivo e o que e custo de ordenacao.
+## Arvores implementadas
+
+### AVL
+Arvore de busca binaria auto-balanceada. A altura e armazenada em cada no e o
+rebalanceamento e feito via rotacoes simples e duplas (LL, RR, LR, RL) sempre
+que o fator de balanco sair do intervalo {-1, 0, 1}. Operacoes com custo
+`O(log n)`: insercao, busca e remocao (por sucessor in-order).
+
+### Rubro-Negra
+Arvore de busca binaria com coloracao de nos (vermelho/preto). Usa no sentinela
+`nil` para eliminar verificacoes de NULL. O balanceamento e garantido pelas
+propriedades da coloracao; fixup de insercao e remocao seguem os casos do CLRS.
+Operacoes com custo `O(log n)`.
+
+### Chave de busca
+Os registros sao indexados por `valor_venda` (double); em caso de empate a
+desambiguacao segue estado → municipio → produto → revenda.
+
+## Metricas do benchmark de arvores
+- tempo de insercao de todos os registros (ms);
+- tempo de busca em `n/10` registros (ms);
+- tempo de remocao de `n/10` registros (ms);
+- altura final da arvore;
+- numero total de rotacoes;
+- numero total de comparacoes.
+
+A AVL tende a ter altura menor (balanceamento mais rigido) e mais rotacoes que
+a Rubro-Negra, que tolera maior desequilibrio mas rotaciona menos.
+
+Alem da saida no terminal, o benchmark de arvores gera:
+- `benchmark_arvore_resultados.csv`: tabela para planilha;
+- `benchmark_arvore_relatorio.html`: painel visual.
 ## Vídeo de explicação:
-https://youtu.be/RQWCVE7FE5E
+_em breve_
 ## Metodos implementados
 - **Insertion Sort**: metodo simples, bom para explicar a insercao em uma parte
   ja ordenada. Executado em amostra limitada porque tem custo medio `O(n^2)`.

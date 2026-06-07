@@ -3,6 +3,7 @@
 #include <time.h>
 
 #include "benchmark.h"
+#include "benchmark_arvore.h"
 #include "csv.h"
 #include "ordenacao.h"
 
@@ -81,6 +82,8 @@ int main(int argc, char *argv[]) {
 
   executar_benchmark(registros, total, metodos,
                      (int)(sizeof(metodos) / sizeof(metodos[0])));
+
+  executar_benchmark_arvore(registros, total);
 
   free(registros);
   return 0;

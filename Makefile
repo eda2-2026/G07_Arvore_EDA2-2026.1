@@ -6,7 +6,10 @@ TARGET = ordenacao_combustivel
 SRCS = $(SRCDIR)/main.c \
        $(SRCDIR)/csv.c \
        $(SRCDIR)/ordenacao.c \
-       $(SRCDIR)/benchmark.c
+       $(SRCDIR)/benchmark.c \
+       $(SRCDIR)/avl.c \
+       $(SRCDIR)/rubro_negra.c \
+       $(SRCDIR)/benchmark_arvore.c
 
 ifeq ($(OS),Windows_NT)
     TARGET = ordenacao_combustivel.exe
