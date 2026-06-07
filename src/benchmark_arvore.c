@@ -79,24 +79,84 @@ static ResultadoArvore medir_rn(const Registro *originais, int total) {
     return r;
 }
 
+static void imprimir_bloco(const ResultadoArvore *r, int total) {
+    int n_ops = total / 10;
+    printf("  %-22s %s\n", "Estrutura:", r->nome);
+    printf("  %-22s %d registros unicos inseridos\n", "Insercao:", (int)r->metricas.insercoes);
+    printf("  %-22s %.3f ms\n", "Tempo de insercao:", r->tempo_insercao_ms);
+    printf("  %-22s %d consultas  ->  %.3f ms  (%.4f ms/busca)\n",
+           "Busca:", n_ops, r->tempo_busca_ms,
+           n_ops > 0 ? r->tempo_busca_ms / n_ops : 0.0);
+    printf("  %-22s %d remocoes   ->  %.3f ms  (%.4f ms/remocao)\n",
+           "Remocao:", n_ops, r->tempo_remocao_ms,
+           n_ops > 0 ? r->tempo_remocao_ms / n_ops : 0.0);
+    printf("  %-22s %d\n", "Altura final:", r->altura);
+    printf("  %-22s %lld\n", "Rotacoes:", r->metricas.rotacoes);
+    printf("  %-22s %lld\n", "Comparacoes:", r->metricas.comparacoes);
+}
+
+static void imprimir_analise(const ResultadoArvore *avl, const ResultadoArvore *rn) {
+    printf("\n  --- Comparacao direta ---\n");
+
+    /* insercao */
+    if (avl->tempo_insercao_ms < rn->tempo_insercao_ms)
+        printf("  Insercao mais rapida  : AVL        (%.3f ms vs %.3f ms)\n",
+               avl->tempo_insercao_ms, rn->tempo_insercao_ms);
+    else
+        printf("  Insercao mais rapida  : Rubro-Negra (%.3f ms vs %.3f ms)\n",
+               rn->tempo_insercao_ms, avl->tempo_insercao_ms);
+
+    /* busca */
+    if (avl->tempo_busca_ms < rn->tempo_busca_ms)
+        printf("  Busca mais rapida     : AVL        (%.4f ms/op vs %.4f ms/op)\n",
+               avl->tempo_busca_ms / (avl->metricas.buscas ? avl->metricas.buscas : 1),
+               rn->tempo_busca_ms  / (rn->metricas.buscas  ? rn->metricas.buscas  : 1));
+    else
+        printf("  Busca mais rapida     : Rubro-Negra (%.4f ms/op vs %.4f ms/op)\n",
+               rn->tempo_busca_ms  / (rn->metricas.buscas  ? rn->metricas.buscas  : 1),
+               avl->tempo_busca_ms / (avl->metricas.buscas ? avl->metricas.buscas : 1));
+
+    /* altura */
+    if (avl->altura < rn->altura)
+        printf("  Arvore mais baixa     : AVL        (altura %d vs %d)\n",
+               avl->altura, rn->altura);
+    else if (rn->altura < avl->altura)
+        printf("  Arvore mais baixa     : Rubro-Negra (altura %d vs %d)\n",
+               rn->altura, avl->altura);
+    else
+        printf("  Altura igual          : %d nos dois casos\n", avl->altura);
+
+    /* rotacoes */
+    if (avl->metricas.rotacoes > rn->metricas.rotacoes)
+        printf("  Mais rotacoes         : AVL        (%lld vs %lld) -- balanceamento mais rigido\n",
+               avl->metricas.rotacoes, rn->metricas.rotacoes);
+    else if (rn->metricas.rotacoes > avl->metricas.rotacoes)
+        printf("  Mais rotacoes         : Rubro-Negra (%lld vs %lld)\n",
+               rn->metricas.rotacoes, avl->metricas.rotacoes);
+    else
+        printf("  Rotacoes iguais       : %lld\n", avl->metricas.rotacoes);
+}
+
 static void imprimir_tabela(const ResultadoArvore *res, int n, int total) {
-    printf("\n================ Benchmark de Arvores ================\n");
-    printf("Chave: valor_venda. Insercoes: %d. Buscas/Remocoes: %d cada.\n\n",
-           total, total / 10);
-    printf("%-12s %12s %11s %11s %8s %12s %12s\n",
-           "Estrutura", "Ins(ms)", "Bus(ms)", "Rem(ms)",
-           "Altura", "Rotacoes", "Comparacoes");
-    printf("-----------------------------------------------------------------------------------\n");
+    printf("\n");
+    printf("################################################################\n");
+    printf("##                                                            ##\n");
+    printf("##          BENCHMARK DE ARVORES AVL vs RUBRO-NEGRA          ##\n");
+    printf("##                                                            ##\n");
+    printf("################################################################\n");
+    printf("  Registros na base : %d\n", total);
+    printf("  Chave de busca    : valor_venda (double)\n");
+    printf("  Operacoes medidas : insercao (base completa), busca e remocao (%d cada)\n\n",
+           total / 10);
+
     for (int i = 0; i < n; i++) {
-        printf("%-12s %12.3f %11.3f %11.3f %8d %12lld %12lld\n",
-               res[i].nome,
-               res[i].tempo_insercao_ms,
-               res[i].tempo_busca_ms,
-               res[i].tempo_remocao_ms,
-               res[i].altura,
-               res[i].metricas.rotacoes,
-               res[i].metricas.comparacoes);
+        printf("  ════════════════════════════════════════\n");
+        imprimir_bloco(&res[i], total);
     }
+    printf("  ════════════════════════════════════════\n");
+
+    imprimir_analise(&res[0], &res[1]);
+    printf("\n################################################################\n\n");
 }
 
 static void gerar_csv(const ResultadoArvore *res, int n, int total) {
