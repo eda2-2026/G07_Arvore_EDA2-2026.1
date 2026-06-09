@@ -1,8 +1,8 @@
 Metodo;Complexidade;Registros;Tempo_ms;Comparacoes;Movimentacoes;RAM_MB;Ordenado;Observacao
-Insertion Sort;O(n^2);5000;731.155;6168616;6173621;3.32;sim;amostra de 5000
-Selection Sort;O(n^2);5000;31.452;12497500;14976;3.32;sim;amostra de 5000
-Shell Sort;O(n^1.3);44931;137.668;1402890;1827731;29.82;sim;base completa
-Merge Sort;O(n log n);44931;143.186;634451;1396582;29.82;sim;base completa
-Quick Sort;O(n log n);44931;70.178;858041;1375012;29.82;sim;base completa
-Heap Sort;O(n log n);44931;132.625;1252553;1966626;29.82;sim;base completa
-Radix Sort;O(n*d);44931;167.638;590493;1666168;29.82;sim;base completa
+Insertion Sort;O(n^2);5000;786.693;6168616;6173621;3.32;sim;amostra de 5000
+Selection Sort;O(n^2);5000;35.988;12497500;14976;3.32;sim;amostra de 5000
+Shell Sort;O(n^1.3);44931;141.842;1402890;1827731;29.82;sim;base completa
+Merge Sort;O(n log n);44931;119.356;634451;1396582;29.82;sim;base completa
+Quick Sort;O(n log n);44931;74.582;858041;1375012;29.82;sim;base completa
+Heap Sort;O(n log n);44931;139.586;1252553;1966626;29.82;sim;base completa
+Radix Sort;O(n*d);44931;173.037;590493;1666168;29.82;sim;base completa
