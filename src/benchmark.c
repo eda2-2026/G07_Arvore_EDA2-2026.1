@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #if defined(__unix__) || defined(__APPLE__)
 #include <sys/resource.h>
 #endif
 
 #include "ordenacao.h"
+#include "tempo.h"
 
 typedef struct {
     const MetodoOrdenacao *metodo;
@@ -21,7 +21,7 @@ typedef struct {
 } ResultadoBenchmark;
 
 static double agora_ms(void) {
-    return (double)clock() * 1000.0 / (double)CLOCKS_PER_SEC;
+    return tempo_agora_ms();
 }
 
 static long memoria_processo_kb(void) {

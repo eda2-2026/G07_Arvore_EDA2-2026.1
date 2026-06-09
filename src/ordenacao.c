@@ -2,7 +2,8 @@
 #include "ordenacao.h"
 
 #include <stdlib.h>
-#include <string.h>
+
+#include "chave.h"
 
 static void trocar(Registro *a, Registro *b, MetricasOrdenacao *metricas) {
   Registro temp = *a;
@@ -16,24 +17,7 @@ int comparar_por_preco(const Registro *a, const Registro *b,
   if (metricas)
     metricas->comparacoes++;
 
-  if (a->valor_venda < b->valor_venda)
-    return -1;
-  if (a->valor_venda > b->valor_venda)
-    return 1;
-
-  int estado = strcmp(a->estado, b->estado);
-  if (estado != 0)
-    return estado;
-
-  int municipio = strcmp(a->municipio, b->municipio);
-  if (municipio != 0)
-    return municipio;
-
-  int produto = strcmp(a->produto, b->produto);
-  if (produto != 0)
-    return produto;
-
-  return strcmp(a->revenda, b->revenda);
+  return comparar_registro(a, b);
 }
 
 void ordenar_insertion_sort(Registro *dados, int total,
@@ -241,19 +225,11 @@ static int comparar_secundario(const Registro *a, const Registro *b,
   if (metricas)
     metricas->comparacoes++;
 
-  int estado = strcmp(a->estado, b->estado);
-  if (estado != 0)
-    return estado;
-
-  int municipio = strcmp(a->municipio, b->municipio);
-  if (municipio != 0)
-    return municipio;
-
-  int produto = strcmp(a->produto, b->produto);
-  if (produto != 0)
-    return produto;
-
-  return strcmp(a->revenda, b->revenda);
+  Registro chave_a = *a;
+  Registro chave_b = *b;
+  chave_a.valor_venda = 0.0;
+  chave_b.valor_venda = 0.0;
+  return comparar_registro(&chave_a, &chave_b);
 }
 
 /*

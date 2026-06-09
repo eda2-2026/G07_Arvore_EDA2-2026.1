@@ -27,8 +27,12 @@ propriedades da coloracao; fixup de insercao e remocao seguem os casos do CLRS.
 Operacoes com custo `O(log n)`.
 
 ### Chave de busca
-Os registros sao indexados por `valor_venda` (double); em caso de empate a
-desambiguacao segue estado → municipio → produto → revenda.
+Os registros sao indexados pela chave composta:
+`valor_venda` → `estado` → `municipio` → `produto` → `revenda`.
+Insercao, busca e remocao usam a mesma chave em AVL e Rubro-Negra.
+Registros com chave composta identica sao ignorados na insercao.
+A funcao `comparar_registro` em `src/chave.c` centraliza essa logica
+tambem usada pelos algoritmos de ordenacao.
 
 ## Metricas do benchmark de arvores
 - tempo de insercao de todos os registros (ms);
@@ -51,13 +55,17 @@ _em breve_
   ja ordenada. Executado em amostra limitada porque tem custo medio `O(n^2)`.
 - **Selection Sort**: metodo simples que escolhe o menor elemento a cada passo.
   Tambem usa amostra limitada por ter custo medio `O(n^2)`.
+- **Shell Sort**: generalizacao do Insertion Sort com gaps decrescentes
+  (sequencia de Knuth). Custo medio empirico proximo de `O(n^1.3)`.
 - **Merge Sort**: divide o vetor e intercala subvetores ordenados. Custo medio
   `O(n log n)` e uso extra de memoria.
 - **Quick Sort**: particiona o vetor em torno de um pivo. Custo medio
   `O(n log n)`.
 - **Heap Sort**: usa a ideia de heap maximo para ordenar em `O(n log n)`.
-- **Radix Sort**: ordena por digitos ou partes da chave sem comparacoes diretas.
-  Custo linear `O(n * k)`, onde `k` e o tamanho maximo da chave.
+- **Radix Sort**: ordena por digitos do preco em centavos (LSD, base 10).
+  Antes da fase radix, aplica Merge Sort estavel nas chaves secundarias para
+  garantir o mesmo desempate da chave composta. Custo linear `O(n * d)`, onde
+  `d` e o numero de digitos do maior preco.
 
 ## KPIs exibidos
 O executavel mostra uma tabela com:

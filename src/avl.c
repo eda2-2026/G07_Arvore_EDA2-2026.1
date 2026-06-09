@@ -1,19 +1,8 @@
 #include "avl.h"
 
 #include <stdlib.h>
-#include <string.h>
 
-static int cmp_chave(const Registro *a, const Registro *b) {
-    if (a->valor_venda < b->valor_venda) return -1;
-    if (a->valor_venda > b->valor_venda) return  1;
-    int r = strcmp(a->estado, b->estado);
-    if (r != 0) return r;
-    r = strcmp(a->municipio, b->municipio);
-    if (r != 0) return r;
-    r = strcmp(a->produto, b->produto);
-    if (r != 0) return r;
-    return strcmp(a->revenda, b->revenda);
-}
+#include "chave.h"
 
 static int altura_no(const NoAVL *n) {
     return n ? n->altura : 0;
@@ -78,17 +67,26 @@ static NoAVL *rebalancear(NoAVL *n, MetricasArvore *m) {
     return n;
 }
 
-static NoAVL *inserir_rec(NoAVL *n, Registro reg, MetricasArvore *m) {
-    if (!n) return novo_no(reg);
+static int inserir_rec(NoAVL **n, Registro reg, MetricasArvore *m) {
+    if (!*n) {
+        *n = novo_no(reg);
+        return *n != NULL ? 1 : 0;
+    }
+
     m->comparacoes++;
-    int c = cmp_chave(&reg, &n->reg);
-    if (c < 0)
-        n->esq = inserir_rec(n->esq, reg, m);
-    else if (c > 0)
-        n->dir = inserir_rec(n->dir, reg, m);
-    else
-        return n; /* chave duplicada: ignora */
-    return rebalancear(n, m);
+    int c = comparar_registro(&reg, &(*n)->reg);
+    if (c < 0) {
+        if (!inserir_rec(&(*n)->esq, reg, m))
+            return 0;
+    } else if (c > 0) {
+        if (!inserir_rec(&(*n)->dir, reg, m))
+            return 0;
+    } else {
+        return 2;
+    }
+
+    *n = rebalancear(*n, m);
+    return 1;
 }
 
 static NoAVL *minimo(NoAVL *n) {
@@ -96,15 +94,17 @@ static NoAVL *minimo(NoAVL *n) {
     return n;
 }
 
-static NoAVL *remover_rec(NoAVL *n, Registro reg, MetricasArvore *m) {
+static NoAVL *remover_rec(NoAVL *n, Registro reg, MetricasArvore *m, int *removido) {
     if (!n) return NULL;
+
     m->comparacoes++;
-    int c = cmp_chave(&reg, &n->reg);
+    int c = comparar_registro(&reg, &n->reg);
     if (c < 0) {
-        n->esq = remover_rec(n->esq, reg, m);
+        n->esq = remover_rec(n->esq, reg, m, removido);
     } else if (c > 0) {
-        n->dir = remover_rec(n->dir, reg, m);
+        n->dir = remover_rec(n->dir, reg, m, removido);
     } else {
+        *removido = 1;
         if (!n->esq || !n->dir) {
             NoAVL *filho = n->esq ? n->esq : n->dir;
             free(n);
@@ -112,7 +112,7 @@ static NoAVL *remover_rec(NoAVL *n, Registro reg, MetricasArvore *m) {
         }
         NoAVL *suc = minimo(n->dir);
         n->reg = suc->reg;
-        n->dir = remover_rec(n->dir, suc->reg, m);
+        n->dir = remover_rec(n->dir, suc->reg, m, removido);
     }
     return rebalancear(n, m);
 }
@@ -131,38 +131,47 @@ static void destruir_rec(NoAVL *n) {
     free(n);
 }
 
+static int contar_rec(const NoAVL *n) {
+    if (!n) return 0;
+    return 1 + contar_rec(n->esq) + contar_rec(n->dir);
+}
+
 /* --- API pública --- */
 
 ArvoreAVL avl_criar(void) {
     ArvoreAVL a;
     a.raiz = NULL;
-    memset(&a.metricas, 0, sizeof(a.metricas));
+    a.metricas = (MetricasArvore){0, 0, 0, 0, 0};
     return a;
 }
 
-void avl_inserir(ArvoreAVL *a, Registro reg) {
-    a->raiz = inserir_rec(a->raiz, reg, &a->metricas);
-    a->metricas.insercoes++;
+int avl_inserir(ArvoreAVL *a, Registro reg) {
+    int status = inserir_rec(&a->raiz, reg, &a->metricas);
+    if (status == 1)
+        a->metricas.insercoes++;
+    return status != 0;
 }
 
-NoAVL *avl_buscar(ArvoreAVL *a, double chave) {
+NoAVL *avl_buscar(ArvoreAVL *a, const Registro *chave) {
     NoAVL *n = a->raiz;
     a->metricas.buscas++;
+
     while (n) {
         a->metricas.comparacoes++;
-        if (chave < n->reg.valor_venda)      n = n->esq;
-        else if (chave > n->reg.valor_venda) n = n->dir;
-        else                                 return n;
+        int c = comparar_registro(chave, &n->reg);
+        if (c < 0)      n = n->esq;
+        else if (c > 0) n = n->dir;
+        else            return n;
     }
     return NULL;
 }
 
-void avl_remover(ArvoreAVL *a, double chave) {
-    Registro chave_reg;
-    memset(&chave_reg, 0, sizeof(chave_reg));
-    chave_reg.valor_venda = chave;
-    a->raiz = remover_rec(a->raiz, chave_reg, &a->metricas);
-    a->metricas.remocoes++;
+int avl_remover(ArvoreAVL *a, Registro reg) {
+    int removido = 0;
+    a->raiz = remover_rec(a->raiz, reg, &a->metricas, &removido);
+    if (removido)
+        a->metricas.remocoes++;
+    return removido;
 }
 
 void avl_inorder(const ArvoreAVL *a, void (*visita)(const Registro *)) {
@@ -171,6 +180,10 @@ void avl_inorder(const ArvoreAVL *a, void (*visita)(const Registro *)) {
 
 int avl_altura(const ArvoreAVL *a) {
     return altura_no(a->raiz);
+}
+
+int avl_contar(const ArvoreAVL *a) {
+    return contar_rec(a->raiz);
 }
 
 void avl_destruir(ArvoreAVL *a) {

@@ -1,10 +1,12 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O2 -std=c99
+CFLAGS = -Wall -Wextra -O2 -std=c99 -D_POSIX_C_SOURCE=200809L
 SRCDIR = src
 TARGET = ordenacao_combustivel
 
 SRCS = $(SRCDIR)/main.c \
        $(SRCDIR)/csv.c \
+       $(SRCDIR)/chave.c \
+       $(SRCDIR)/tempo.c \
        $(SRCDIR)/ordenacao.c \
        $(SRCDIR)/benchmark.c \
        $(SRCDIR)/avl.c \

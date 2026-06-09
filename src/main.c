@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include "benchmark.h"
 #include "benchmark_arvore.h"
 #include "csv.h"
 #include "ordenacao.h"
+#include "tempo.h"
 
 #define ALUNO1_NOME "VICTOR LEANDRO ROCHA DE ASSIS"
 #define ALUNO1_MATRICULA "222021826"
@@ -63,9 +63,9 @@ int main(int argc, char *argv[]) {
 
   printf("\nCarregando CSV: %s\n", caminho_csv);
   int total = 0;
-  double inicio = (double)clock() * 1000.0 / (double)CLOCKS_PER_SEC;
+  double inicio = tempo_agora_ms();
   Registro *registros = carregar_csv(caminho_csv, &total);
-  double fim = (double)clock() * 1000.0 / (double)CLOCKS_PER_SEC;
+  double fim = tempo_agora_ms();
 
   if (!registros || total == 0) {
     fprintf(stderr, "Falha ao carregar a base de dados.\n");
