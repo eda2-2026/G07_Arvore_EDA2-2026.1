@@ -49,7 +49,7 @@ Alem da saida no terminal, o benchmark de arvores gera:
 - `benchmark_arvore_resultados.csv`: tabela para planilha;
 - `benchmark_arvore_relatorio.html`: painel visual.
 ## Vídeo de explicação:
-_em breve_
+https://www.youtube.com/watch?v=_tZm4or7WOM
 ## Metodos implementados
 - **Insertion Sort**: metodo simples, bom para explicar a insercao em uma parte
   ja ordenada. Executado em amostra limitada porque tem custo medio `O(n^2)`.
